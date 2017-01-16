@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
 	   tv.tv_sec = 1;
 	   tv.tv_usec = 0;
 
-	   retval = select(1, &rfds, NULL, NULL, &tv);
+	   retval = select(listenfd+1, &rfds, NULL, NULL, &tv);
 	   /* Don't rely on the value of tv now! */
 
 	   if (retval == -1)
