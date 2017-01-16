@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 				if (bytes > 0)
 					close(connfd);
             	//syslog(LOG_NOTICE, "Message received: %s", recv_buff);
-				printf("Message received: %s", recv_buff);
+				printf("Message received: %s\n", recv_buff);
 				fflush(stdout);
 			}
 				
