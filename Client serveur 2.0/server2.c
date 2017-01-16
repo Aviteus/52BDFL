@@ -15,8 +15,9 @@ int main(int argc, char *argv[])
     // var
     int listenfd = 0, connfd = 0;
     struct sockaddr_in serv_addr;
-
+    int sockfd = 0;
     char recv_buff[1024];
+	char *send_buff;
     time_t ticks;
 
     memset(recv_buff, '0', sizeof(recv_buff));
@@ -68,6 +69,46 @@ int main(int argc, char *argv[])
 			if (FD_ISSET(0, &rfds)){			
 			   	read(0, buffer, count);
 				printf("keyboard input : %s\n",buffer);
+				
+				send_buff = buffer;
+
+				// init socket to get a file descriptor
+				if((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+				{
+					printf("\n Error : Could not create socket \n");
+					return 1;
+				}
+
+				// socket configuration to talk on port 5000
+				memset(&serv_addr, '0', sizeof(serv_addr));
+
+				serv_addr.sin_family = AF_INET;
+				serv_addr.sin_port = htons(5000);
+
+				if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr)<=0)
+				{
+					printf("\n inet_pton error occured\n");
+					return 1;
+				}
+
+				// connect to server
+				if( connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+				{
+				   printf("\n Error : Connect Failed \n");
+				   return 1;
+				}
+
+				int bytes = write(sockfd, send_buff, sizeof(send_buff));
+
+				if(bytes < 0)
+				{
+					printf("\n Send error \n");
+				}
+
+				// close socket
+				close(sockfd);				
+
+				
 			}
 			else if(FD_ISSET(listenfd, &rfds)){
 				connfd = accept(listenfd, (struct sockaddr*)NULL, NULL);
